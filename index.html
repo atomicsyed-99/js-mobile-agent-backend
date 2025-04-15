@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mobile JS Agent</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    textarea, button { width: 100%; padding: 12px; font-size: 16px; margin-top: 10px; }
+    pre { background: #f4f4f4; padding: 12px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h2>🤖 Mobile Browser Agent</h2>
+  <textarea id="instruction" placeholder="e.g., Fill in email and click login"></textarea>
+  <button onclick="runInstruction()">Run</button>
+  <pre id="output">JS code will appear here...</pre>
+
+  <script>
+    async function runInstruction() {
+      const instruction = document.getElementById("instruction").value;
+      const output = document.getElementById("output");
+      output.innerText = "Sending to backend...";
+
+      const response = await fetch("https://js-mobile-agent-backend.onrender.com/generate-js", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ instruction })
+      });
+
+      const { js_code } = await response.json();
+      output.innerText = `Executing:\n\n${js_code}`;
+
+      try {
+        eval(js_code);
+      } catch (err) {
+        output.innerText += `\n\n❌ Error:\n${err}`;
+      }
+    }
+  </script>
+</body>
+</html>
